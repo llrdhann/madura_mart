@@ -244,15 +244,15 @@
                         <div class="col-12">
                             <div class="mb-3 px-3 pt-3">
                                 <label for="nama_distributor" class="form-label">Nama Distributor</label>
-                                <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" placeholder="Enter Distributor Name">
+                                <input type="text" class="form-control" id="nama_distributor" name="nama_distributor" placeholder="Enter Distributor Name" value="{{ old('nama_distributor') }}">
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="alamat_distributor" class="form-label">Alamat Distributor</label>
-                                <textarea type="text" class="form-control" id="alamat_distributor" name="alamat_distributor" placeholder="Enter Distributor Addresses" rows="5"></textarea>
+                                <textarea type="text" class="form-control" id="alamat_distributor" name="alamat_distributor" placeholder="Enter Distributor Addresses" rows="5">{{ old('alamat_distributor') }}</textarea>
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="notelepon_distributor" class="form-label">No. Telp Distributor</label>
-                                <input type="text" class="form-control" id="notelepon_distributor" name="notelepon_distributor" placeholder="Enter Distributor Phone Number">
+                                <input type="text" class="form-control" id="notelepon_distributor" name="notelepon_distributor" placeholder="Enter Distributor Phone Number" value="{{ old('notelepon_distributor') }}">
                             </div>
                         </div>
                     </div>
@@ -329,7 +329,7 @@
             }
         });
 
-         @if (session('duplikat'))
+        @if (session('duplikat'))
         swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
         @endif
       </script>

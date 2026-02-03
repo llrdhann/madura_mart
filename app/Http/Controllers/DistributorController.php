@@ -43,7 +43,7 @@ class DistributorController extends Controller
         $notelepon = DB::table('distributors')->where('notelepon_distributor', $request->notelepon_distributor)->value('notelepon_distributor');
 
         if ($request->nama_distributor == $nama && $request->alamat_distributor == $alamat && $request->notelepon_distributor == $notelepon) {
-            return redirect()->route('distributor.create')->with('duplikat', 'Distributor ' . $request->nama_distributor . ' data with the same address ' . $request->alamat_distributor . ' and phone number ' . $request->notelepon_distributor . ' is already exists. Please use different data.');
+            return redirect()->route('distributor.create')->with('duplikat', 'Distributor ' . $request->nama_distributor . ' data with the same address ' . $request->alamat_distributor . ' and phone number ' . $request->notelepon_distributor . ' is already exists. Please use different data.')->withInput();
         }else{
             //
             $data = $request->only(['nama_distributor', 'alamat_distributor', 'notelepon_distributor']);
