@@ -37,9 +37,19 @@ class DistributorController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->only(['nama_distributor', 'alamat_distributor', 'notelepon_distributor']);
-        Distributor::create($data);
-        return redirect()->route('distributor.index')->with('simpan', 'The new Distributor Data, ' . $request->nama_distributor . ', has been succesfully saved');
+        // add validation to avoid duplicate data
+        $nama = DB::table('distributors')->where('nama_distributor', $request->nama_distributor)->value('nama_distributor');
+        $alamat = DB::table('distributors')->where('alamat_distributor', $request->alamat_distributor)->value('alamat_distributor');
+        $notelepon = DB::table('distributors')->where('notelepon_distributor', $request->notelepon_distributor)->value('notelepon_distributor');
+
+        if ($request->nama_distributor == $nama && $request->alamat_distributor == $alamat && $request->notelepon_distributor == $notelepon) {
+            return redirect()->route('distributor.create')->with('duplikat', 'Distributor ' . $request->nama_distributor . ' data with the same address ' . $request->alamat_distributor . ' and phone number ' . $request->notelepon_distributor . ' is already exists. Please use different data.');
+        }else{
+            //
+            $data = $request->only(['nama_distributor', 'alamat_distributor', 'notelepon_distributor']);
+            Distributor::create($data);
+            return redirect()->route('distributor.index')->with('simpan', 'The new Distributor Data, ' . $request->nama_distributor . ', has been succesfully saved');
+        }
     }
 
     /**

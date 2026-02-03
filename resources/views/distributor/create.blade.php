@@ -328,6 +328,10 @@
                 form.submit();
             }
         });
+
+         @if (session('duplikat'))
+        swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
+        @endif
       </script>
     </div>
 @endsection
