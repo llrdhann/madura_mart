@@ -235,28 +235,29 @@
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Add New {{$title}} Data</h6>
+              <h6>Edit {{$title}} Data</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
-                <form action="{{ route('products.store')}}" method="POST" id="form" enctype="multipart/form-data">
+                <form action="{{ route('products.update', $data->id) }}" method="POST" id="form">
+                    @method('PUT')
                     @csrf
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3 px-3 pt-3">
                                 <label for="kd_barang" class="form-label">Product Code</label>
-                                <input type="text" class="form-control" id="kd_barang" name="kd_barang" placeholder="Enter Product Code" value="{{ old('kd_barang') }}" maxlength="15">
+                                <input type="text" class="form-control" id="kd_barang" name="kd_barang" placeholder="Enter Product Code" value="{{ old('kd_barang', $data->kd_barang) }}" maxlength="15">
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="nama_barang" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Enter Product Name" value="{{ old('nama_barang') }}" maxlength="50">
+                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Enter Product Name" value="{{ old('nama_barang', $data->nama_barang) }}" maxlength="50">
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="jenis_barang" class="form-label">Product Type</label>
-                                <input type="text" class="form-control" id="jenis_barang" name="jenis_barang" placeholder="Enter Product Type" value="{{ old('jenis_barang') }}" maxlength="50">
+                                <input type="text" class="form-control" id="jenis_barang" name="jenis_barang" placeholder="Enter Product Type" value="{{ old('jenis_barang', $data->jenis_barang) }}" maxlength="50">
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="tgl_expired" class="form-label">Expired Date</label>
-                                <input type="date" class="form-control" id="tgl_expired" name="tgl_expired" value="{{ old('tgl_expired') }}">
+                                <input type="date" class="form-control" id="tgl_expired" name="tgl_expired" value="{{ old('tgl_expired', $data->tgl_expired) }}">
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6">
@@ -270,14 +271,14 @@
                             </div>
                             <div class="mb-3 px-3 pt-3">
                             <label for="foto_barang" class="form-label">Product Image</label>
-                            <input type="file" class="form-control" id="foto_barang" name="foto_barang" placeholder="Enter Product Image URL" value="{{ old('foto_barang') }}">
+                            <input type="file" class="form-control" id="foto_barang" name="foto_barang" placeholder="Enter Product Image URL" value="{{ old('foto_barang'), $data->foto_barang }}">
                             </div>
                         </div>
                     </div>
                     <div class="row ms-3 me-3 mt-3">
                         <div class="col-12">
                             <div class="px-3 pb-3 text-end">
-                                <a href="{{ route('distributor.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
+                                <a href="{{ route('products.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
                                 <button type="button" id="simpan" class="btn bg-gradient-primary">Save New {{ $title }}</button>
                             </div>
                         </div>
