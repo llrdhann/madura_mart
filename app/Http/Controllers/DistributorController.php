@@ -103,5 +103,8 @@ class DistributorController extends Controller
     public function destroy(string $id)
     {
         //
+        $nama_distributor = DB::table('distributors')->where('id', $id)->value('nama_distributor');
+        Distributor::findOrFail($id)->delete();
+        return redirect()->route('distributor.index')->with('hapus', 'The Distributor Data, ' . $nama_distributor . ', has been succesfully deleted');
     }
 }

@@ -263,7 +263,7 @@
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->notelepon_distributor}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
                           <a href="{{ route('distributor.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
-                          <a href=""><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="" width="20"></a>
+                          <a href="{{ route('distributor.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
                         </td>
                     </tr>
                     @endforeach
@@ -314,6 +314,10 @@
         </div>
       </footer>
     </div>
+    <form action="" method="post" id="form">
+        @method('DELETE')
+        @csrf
+  </form>
     <script>
       @if (session('simpan'))
         swal("Success", "{{ session('simpan') }}", "success");
@@ -324,5 +328,27 @@
       @if (session('duplikat'))
         swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
       @endif
+      @if (session('hapus'))
+        swal("Deleted!", "{{ session('hapus') }}", "success");
+      @endif
+
+      let form = document.getElementById('form');
+    function hapus(event, el) {
+        event.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, Delete it!",
+                closeOnCOnfirm: true
+            },
+            function() {
+               
+                    form.action = el.href;
+                    form.submit(); 
+            });
+            }
     </script>
 @endsection
