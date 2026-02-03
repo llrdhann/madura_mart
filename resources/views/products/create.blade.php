@@ -21,11 +21,6 @@
         </div>
         <ul class="navbar-nav  justify-content-end">
             <li class="nav-item d-flex align-items-center">
-            <div class="mx-3">
-              <a href="{{route('products.create')}}" class="btn btn-primary btn-sm mb-0">Add New {{ $title }}</a>
-            </div>
-            </li>
-            <li class="nav-item d-flex align-items-center">
             <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
                 <span class="d-sm-inline d-none">Sign In</span>
@@ -240,46 +235,54 @@
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>{{$title}} Data</h6>
+              <h6>Add New {{$title}} Data</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">No</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Code</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Name</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Type</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Expired Date</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Price</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Stock</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Image</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach ($datas as $nmr => $data)
-                    <tr>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4 text-center">{{$nmr + 1 . "."}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->kd_barang}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_barang}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jenis_barang}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_expired}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <img src="{{ asset('storage/'.$data->foto_barang) }}" alt="gambar produk" width="50">
-                        </td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <a href="{{ route('products.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
-                          <a href="{{ route('products.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
-                        </td>
-                    </tr>
-                    @endforeach
-                  </tbody>
-                </table>
-              </div>
+                <form action="{{ route('products.store')}}" method="POST" id="form" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row ms-3 me-3">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="kd_barang" class="form-label">Product Code</label>
+                                <input type="text" class="form-control" id="kd_barang" name="kd_barang" placeholder="Enter Distributor Name" value="{{ old('kd_barang') }}" maxlength="15">
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="nama_barang" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Enter Distributor Addresses" value="{{ old('nama_barang') }}" maxlength="50">
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="jenis_barang" class="form-label">Product Type</label>
+                                <input type="text" class="form-control" id="jenis_barang" name="jenis_barang" placeholder="Enter Product Type" value="{{ old('jenis_barang') }}" maxlength="50">
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="tgl_expired" class="form-label">Expired Date</label>
+                                <input type="date" class="form-control" id="tgl_expired" name="tgl_expired" value="{{ old('tgl_expired') }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3 px-3 pt-3">
+                            <label for="harga_jual" class="form-label">Price</label>
+                            <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}" readonly>
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                            <label for="stok" class="form-label">Stock</label>
+                            <input type="text" class="form-control" id="stok" name="stok" placeholder="Enter Product Stock" value="{{ old('stok') ? old('stok') : 0 }}" readonly>
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                            <label for="foto_barang" class="form-label">Product Image</label>
+                            <input type="file" class="form-control" id="foto_barang" name="foto_barang" placeholder="Enter Product Image URL" value="{{ old('foto_barang') }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row ms-3 me-3 mt-3">
+                        <div class="col-12">
+                            <div class="px-3 pb-3 text-end">
+                                <a href="{{ route('distributor.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
+                                <button type="button" id="simpan" class="btn bg-gradient-primary">Save New {{ $title }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
           </div>
         </div>
@@ -323,42 +326,46 @@
           </div>
         </div>
       </footer>
-    </div>
-    <form action="" method="post" id="form">
-        @method('DELETE')
-        @csrf
-  </form>
-    <script>
-      @if (session('simpan'))
-        swal("Success", "{{ session('simpan') }}", "success");
-      @endif
-      @if (session('ubah'))
-        swal("Success", "{{ session('ubah') }}", "success");
-      @endif
-      @if (session('duplikat'))
-        swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
-      @endif
-      @if (session('hapus'))
-        swal("Deleted!", "{{ session('hapus') }}", "success");
-      @endif
-
-      let form = document.getElementById('form');
-    function hapus(event, el) {
-        event.preventDefault();
-        swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this data!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Yes, Delete it!",
-                closeOnCOnfirm: true
-            },
-            function() {
-               
-                    form.action = el.href;
-                    form.submit(); 
-            });
+      <script>
+        let btnSimpan = document.getElementById('simpan');
+        let form = document.getElementById('form');
+        btnSimpan.addEventListener('click', function() {
+            if(kd_barang.value.trim() === '') {
+                kd_barang.focus();
+                swal("Invalid!", "Product Code Cannot Be Empty!", "error");
             }
-    </script>
+            else if(nama_barang.value.trim() === '') {
+                nama_barang.focus();
+                swal("Invalid!", "Product Name Cannot Be Empty!", "error");
+            }
+            else if(jenis_barang.value.trim() === '') { 
+                jenis_barang.focus();
+                swal("Invalid!", "Product Type Cannot Be Empty!", "error");
+            }
+            else if(tgl_expired.value.trim() === '') {
+                tgl_expired.focus();
+                swal("Invalid!", "Expired Date Cannot Be Empty!", "error");
+            }
+            else if(harga_jual.value.trim() === '') {
+                harga_jual.focus();
+                swal("Invalid!", "Price Cannot Be Empty!", "error");
+            }
+            else if(stok.value.trim() === '') {
+                stok.focus();
+                swal("Invalid!", "Stock Cannot Be Empty!", "error");
+            }
+            else if(foto_barang.value.trim() === '') {
+                foto_barang.focus();
+                swal("Invalid!", "Product Image Cannot Be Empty!", "error");
+            }
+            else {
+                form.submit();
+            }
+        });
+
+        @if (session('duplikat'))
+        swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
+        @endif
+      </script>
+    </div>
 @endsection

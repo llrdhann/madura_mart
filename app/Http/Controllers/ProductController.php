@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -36,6 +37,20 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
+        $kd = DB::table('products')->where('kd_barang', $request->kd_barang)->value('kd_barang');
+        $nama = DB::table('products')->where('nama_barang', $request->nama_barang)->value('nama_barang');
+
+        if ($request->kd_barang == $kd) {
+            return redirect()->route('products.create')->with('duplikat', 'Product ' . $request->kd_barang . ' data with the same name ' . $request->kd_barang . ' is already exists. Please use different data.')->withInput();
+        }elseif ($request->nama_barang == $nama) {
+            return redirect()->route('products.create')->with('duplikat', 'Product ' . $request->nama_barang . ' data with the same code ' . $request->nama_barang . ' is already exists. Please use different data.')->withInput();
+        }else{
+            //
+            $data = $request->all();
+            $data['foto_barang'] = $request->file('foto_barang')->store('product_images');
+            Product::create($data);
+            return redirect()->route('products.index')->with('simpan', 'The new Product Data, ' . $request->nama_barang . ', has been succesfully saved');
+        }
     }
 
     /**
