@@ -261,7 +261,7 @@
                   <tbody>
                     @foreach ($datas as $nmr => $data)
                     <tr>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4 text-center">{{$nmr + 1 . "."}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$nmr + 1 . "."}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->kd_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jenis_barang}}</td>
@@ -269,13 +269,31 @@
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <img src="{{ asset('storage/'.$data->foto_barang) }}" alt="gambar produk" width="50">
+                          <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
                         </td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
                           <a href="{{ route('products.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
                           <a href="{{ route('products.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
                         </td>
                     </tr>
+
+                    <!-- Modal Foto Produk -->
+                     <div class="modal fade" id="staticBackdrop{{ $data->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{ $data->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">{{ $data->nama_barang }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="{{ asset('storage/' .$data->foto_barang) }}" alt="gambar produk" class="img-thumbnail cursor-pointer" width="75%">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
                     @endforeach
                   </tbody>
                 </table>
