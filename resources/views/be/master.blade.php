@@ -66,6 +66,9 @@
   @if ($title === 'Products')
     @yield('products')
   @endif
+  @if ($title === 'Purchase')
+    @yield('purchase')
+  @endif
   </main>   
   <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
