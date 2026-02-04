@@ -103,8 +103,13 @@ class DistributorController extends Controller
     public function destroy(string $id)
     {
         //
+        $ada_pembelian = DB::table('purchases')->where('id_distributor', $id)->exists();
+        if ($ada_pembelian) {
+            return redirect()->route('distributor.index')->with('gagal', 'The Distributor Data cannot be deleted because it is still related to Purchase Data. Please delete the related Purchase Data first.');
+        }else{
         $nama_distributor = DB::table('distributors')->where('id', $id)->value('nama_distributor');
         Distributor::findOrFail($id)->delete();
         return redirect()->route('distributor.index')->with('hapus', 'The Distributor Data, ' . $nama_distributor . ', has been succesfully deleted');
+        }
     }
 }

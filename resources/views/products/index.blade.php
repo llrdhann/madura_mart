@@ -359,6 +359,9 @@
       @if (session('hapus'))
         swal("Deleted!", "{{ session('hapus') }}", "success");
       @endif
+      @if (session('gagal'))
+        swal("Failed!", "{{ session('gagal') }}", "error");
+      @endif
 
       let form = document.getElementById('form');
     function hapus(event, el) {
