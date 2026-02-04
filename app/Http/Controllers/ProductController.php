@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -80,23 +81,23 @@ class ProductController extends Controller
     {
         //
         $product_lama = DB::table('products')->where('id', $id)->value('nama_barang');
-        $kd = DB::table('products')->where('kd_barang', $request->kd_barang)->value('kd_barang');
-        $nama = DB::table('products')->where('nama_barang', $request->nama_barang)->value('nama_barang');
-        $jenis = DB::table('products')->where('jenis_barang', $request->jenis_barang)->value('jenis_barang');
-        $tgl_expired = DB::table('products')->where('tgl_expired', $request->tgl_expired)->value('tgl_expired');
-        $harga = DB::table('products')->where('harga_jual', $request->harga_jual)->value('harga_jual');
-        $stok = DB::table('products')->where('stok', $request->stok_barang)->value('stok');
-        $foto = DB::table('products')->where('foto_barang', $request->foto_barang)->value('foto_barang');
+        $foto_lama = DB::table('products')->where('id', $id)->value('foto_barang');
+        $products = Product::findOrFail($id);
 
-        if ($request->kd_barang == $kd && $request->nama_barang == $nama && $request->jenis_barang == $jenis && $request->tgl_expired == $tgl_expired && $request->harga_jual == $harga && $request->stok_barang == $stok && $request->foto_barang == $foto) {
-            return redirect()->route('products.edit', $id)->with('duplikat', 'Product ' . $request->nama_barang . ' data with the same code ' . $request->kd_barang . ', type ' . $request->jenis_barang . ', expired date ' . $request->tgl_expired . ', price ' . number_format($request->harga_jual, 0, ',', '.') . ', stock ' . number_format($request->stok_barang, 0, ',', '.') . ', and image ' . basename($request->foto_barang) . ' is already exists. Please use different data.');
-        }else{
-            //
+        if ($request->hasFile('foto_barang')) {
             $data = $request->all();
-            $product = Product::findOrFail($id);
-            $product->update($data);
-            return redirect()->route('products.index')->with('ubah', 'The Product Data, ' . $product_lama . ' become ' . $request->nama_barang . ', has been succesfully updated');
+            $data['foto_barang'] = $request->file('foto_barang')->store('product_images');
+            Storage::delete($foto_lama);
+            $products->update($data);
+            return redirect()->route('products.index')->with('ubah', 'The Product Data, ' . $product_lama . ', has been succesfully updated');
+
+        } else {
+            $data = $request->all();
+            $data['foto_barang'] = $foto_lama;
+            $products->update($data);
+            return redirect()->route('products.index')->with('ubah', 'The Product Data, ' . $product_lama . ', has been succesfully updated');
         }
+        
     }
 
     /**

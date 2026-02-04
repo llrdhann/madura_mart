@@ -261,7 +261,7 @@
                         <div class="col-12">
                             <div class="px-3 pb-3 text-end">
                                 <a href="{{ route('distributor.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
-                                <button type="button" id="simpan" class="btn bg-gradient-primary">Save New {{ $title }}</button>
+                                <button type="button" id="simpan" class="btn bg-gradient-primary">Update {{ $title }}</button>
                             </div>
                         </div>
                     </div>

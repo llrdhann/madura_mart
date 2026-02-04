@@ -238,9 +238,9 @@
               <h6>Edit {{$title}} Data</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
-                <form action="{{ route('products.update', $data->id) }}" method="POST" id="form">
-                    @method('PUT')
+                <form action="{{ route('products.update', $data->id)}}" method="POST" id="form" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3 px-3 pt-3">
@@ -263,15 +263,15 @@
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3 px-3 pt-3">
                             <label for="harga_jual" class="form-label">Price</label>
-                            <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}" readonly>
+                            <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Price" value="{{ old('harga_jual', $data->harga_jual) ? old('harga_jual', $data->harga_jual) : 0 }}" readonly>
                             </div>
                             <div class="mb-3 px-3 pt-3">
                             <label for="stok" class="form-label">Stock</label>
-                            <input type="text" class="form-control" id="stok" name="stok" placeholder="Enter Product Stock" value="{{ old('stok') ? old('stok') : 0 }}" readonly>
+                            <input type="text" class="form-control" id="stok" name="stok" placeholder="Enter Product Stock" value="{{ old('stok', $data->stok) ? old('stok', $data->stok) : 0 }}" readonly>
                             </div>
                             <div class="mb-3 px-3 pt-3">
                             <label for="foto_barang" class="form-label">Product Image</label>
-                            <input type="file" class="form-control" id="foto_barang" name="foto_barang" placeholder="Enter Product Image URL" value="{{ old('foto_barang'), $data->foto_barang }}">
+                            <input type="file" class="form-control" id="foto_barang" name="foto_barang" placeholder="Enter Product Image URL" value="{{ old('foto_barang') }}">
                             </div>
                         </div>
                     </div>
@@ -279,7 +279,7 @@
                         <div class="col-12">
                             <div class="px-3 pb-3 text-end">
                                 <a href="{{ route('products.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
-                                <button type="button" id="simpan" class="btn bg-gradient-primary">Save New {{ $title }}</button>
+                                <button type="button" id="simpan" class="btn bg-gradient-primary">Update {{ $title }}</button>
                             </div>
                         </div>
                     </div>
