@@ -105,5 +105,8 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
+        $nama_barang = DB::table('products')->where('id', $id)->value('nama_barang');
+        Product::findOrFail($id)->delete();
+        return redirect()->route('products.index')->with('hapus', 'The Product Data, ' . $nama_barang . ', has been succesfully deleted');
     }
 }
