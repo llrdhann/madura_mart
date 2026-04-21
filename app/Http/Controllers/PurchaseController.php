@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Distributor;
 use App\Models\Product;
-
+use App\Models\Purchase;
+use App\Models\Purchase_Detail;
 
 
 class PurchaseController extends Controller
@@ -47,17 +48,14 @@ class PurchaseController extends Controller
         if($request->has('no_nota')) {
             $purchase = $request->only('no_nota', 'tgl_nota', 'id_distributor');
             $purchase['total_bayar'] = 0;
-            $purchase = purchase::create($purchase);
+            $purchase = Purchase::create($purchase);
         }
 
-        $purchase = $request->only('no_nota', 'tgl_nota', 'id_distributor');
-        $purchase = purchase::create($purhase);
-
-        $purchaseDetails = $request->only('id_barang', 'harga_beli', 'argin_jual', 'jumlah_beli', 'subtotal');
-        $purchaseDetails['id_pembelian'] = DB::table('purchase')->max('id');    
+        $purchaseDetails = $request->only('id_barang', 'harga_beli', 'margin_jual', 'jumlah_beli', 'subtotal');
+        $purchaseDetails['id_pembelian'] = DB::table('purchases')->max('id');    
         $purchaseDetails = Purchase_Detail::create($purchaseDetails);
 
-       return redirect()->route('purchase.create')->with('success', 'Purchase with invoice no  '. $request->no_nota .' has been created successfully.')->with('data', DB::table('purchase')->where('id', DB::table('purchase')->max('id'))->first());
+       return redirect()->route('purchase.index')->with('success', 'Purchase with invoice no  '. $request->no_nota .' has been created successfully.')->with('data', DB::table('purchases')->where('id', DB::table('purchases')->max('id'))->first());
     }
 
     /**

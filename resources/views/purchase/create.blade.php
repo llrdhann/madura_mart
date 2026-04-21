@@ -238,7 +238,7 @@
               <h6>Add New {{$title}} Data</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
-                <form action="{{ route('products.store')}}" method="POST" id="form" enctype="multipart/form-data">
+                <form action="{{ route('purchase.store')}}" method="POST" id="form" enctype="multipart/form-data">
                     @csrf
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
@@ -247,8 +247,8 @@
                                 <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="15">
                             </div>
                             <div class="mb-3 px-3 pt-3">
-                                <label for="id_distributor" class="form-label">Distributor</label>
-                                <select class="form-control" id="id_distributor" name="id_distributor">
+                                <label for="distributor" class="form-label">Distributor</label>
+                                <select class="form-control" id="distributor" name="id_distributor">
                                     <option value="" selected>Select Distributor</option>
                                     @foreach($distributors as $distributor)
                                         <option value="{{ $distributor->id }}"
