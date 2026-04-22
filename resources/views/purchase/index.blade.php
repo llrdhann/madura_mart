@@ -26,10 +26,17 @@
             </div>
             </li>
             <li class="nav-item d-flex align-items-center">
-            <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Sign In</span>
-            </a>
+            <span class="nav-link text-body font-weight-bold px-0 me-2">
+                    <i class="fa fa-user me-sm-1"></i>
+                    <span class="d-sm-inline d-none">{{ Auth::user()->name }}</span>
+                </span>
+                <form method="POST" action="{{ route('logout') }}" class="d-flex align-items-center m-0">
+                    @csrf
+                    <button type="submit" class="nav-link text-body font-weight-bold px-0 border-0 bg-transparent cursor-pointer" title="Logout">
+                        <i class="fas fa-sign-out-alt me-sm-1"></i>
+                        <span class="d-sm-inline d-none">Logout</span>
+                    </button>
+                </form>
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
@@ -138,10 +145,17 @@
               <a class="btn btn-outline-primary btn-sm mb-0 me-3" target="_blank" href="https://www.creative-tim.com/builder?ref=navbar-soft-ui-dashboard">Online Builder</a>
             </li>
             <li class="nav-item d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Sign In</span>
-              </a>
+               <span class="nav-link text-body font-weight-bold px-0 me-2">
+                    <i class="fa fa-user me-sm-1"></i>
+                    <span class="d-sm-inline d-none">{{ Auth::user()->name }}</span>
+                </span>
+                <form method="POST" action="{{ route('logout') }}" class="d-flex align-items-center m-0">
+                    @csrf
+                    <button type="submit" class="nav-link text-body font-weight-bold px-0 border-0 bg-transparent cursor-pointer" title="Logout">
+                        <i class="fas fa-sign-out-alt me-sm-1"></i>
+                        <span class="d-sm-inline d-none">Logout</span>
+                    </button>
+                </form>
             </li>
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
@@ -254,6 +268,7 @@
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Type</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Expired Date</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Stock</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Purchase Price</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Selling Margin</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Selling Price</th>
@@ -274,6 +289,7 @@
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jenis_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_expired}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_beli, 0, ',', '.')}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->margin_jual}}%</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
