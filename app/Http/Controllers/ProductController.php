@@ -7,6 +7,9 @@ use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+
+
+
 class ProductController extends Controller
 {
     /**
@@ -106,7 +109,7 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
-        $ada_pembelian = DB::table('purchase_details')->where('id_barang', $id)->exists();
+        $ada_pembelian = DB::table('purchase__details')->where('id_barang', $id)->exists();
         if ($ada_pembelian) {
             return redirect()->route('products.index')->with('gagal', 'The Product Data cannot be deleted because it is still related to Purchase Data. Please delete the related Purchase Data first.');
         }else{

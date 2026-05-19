@@ -256,11 +256,11 @@
                     @csrf
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="no_nota" class="form-label">No Invoice</label>
                                 <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="15">
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="distributor" class="form-label">Distributor</label>
                                 <select class="form-control" id="distributor" name="id_distributor">
                                     <option value="" selected>Select Distributor</option>
@@ -272,7 +272,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="id_barang" class="form-label">Product</label>
                                 <select class="form-control" id="id_barang" name="id_barang">
                                     <option value="" selected>Select Product</option>
@@ -283,25 +283,25 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="harga_beli" class="form-label">Purchase Price</label>
                                 <input type="text" class="form-control" id="harga_beli" name="harga_beli" placeholder="Enter Product Purchase Price" value="{{ old('harga_beli') ? old('harga_beli') : 0 }}">
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="margin_jual" class="form-label">Selling Margin</label>
                                 <input type="text" class="form-control" id="margin_jual" name="margin_jual" placeholder="Enter Product Selling Margin" value="{{ old('margin_jual') ? old('margin_jual') : 0 }}">
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6">
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="tgl_nota" class="form-label">Invoice Date</label>
                                 <input type="date" class="form-control" id="tgl_nota" name="tgl_nota" value="@if (isset(session('data')->tgl_nota)) {{ session('data')->tgl_nota }} @endif">
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="harga_jual" class="form-label">Selling Price</label>
                                 <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Selling Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}" readonly>
                             </div>
-                            <div class="mb-3 px-3 pt-3">
+                            <div class="mb-3">
                                 <label for="jumlah_beli" class="form-label">Purchase Amount</label>
                                 <input type="text" class="form-control" id="jumlah_beli" name="jumlah_beli" placeholder="Enter Product Purchase Amount" value="{{ old('jumlah_beli') ? old('jumlah_beli') : 0 }}">
                             </div>
@@ -311,7 +311,7 @@
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="total_bayar" class="form-label">Total Pay</label>
-                                <input type="text" class="form-control" id="total_bayar" name="total_bayar" placeholder="Enter Product Total Pay" value="{{ old('total_bayar') ? old('total_bayar') : 0 }}" readonly>
+                                <input type="text" class="form-control fs-1 fw-bold" id="total_bayar" name="total_bayar" placeholder="Enter Product Total Pay" value="{{ old('total_bayar') ? old('total_bayar') : 0 }}" disabled>
                             </div>
                         </div>
                     </div>
@@ -534,7 +534,7 @@
                 @if(isset(session('data')->total_bayar)) 
                     total_bayar.value = parseInt ({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
                 @else
-                    total_bayar.value = subtotal.value;
+                    total_bayar.value = totalBayar();
                 @endif
             }
         });

@@ -275,7 +275,7 @@
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Purchase Amount</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Subtotal</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Total Pay</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Image</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Photo</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Actions</th>
                     </tr>
                   </thead>
@@ -291,7 +291,7 @@
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_expired}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_beli, 0, ',', '.')}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->margin_jual}}%</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->margin_jual}} %</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jumlah_beli}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->subtotal, 0, ',', '.')}}</td>
@@ -324,8 +324,7 @@
                         </div>
                     @endforeach
                   </tbody>
-                </table>  
-                    
+                </table> 
               </div>
             </div>
           </div>

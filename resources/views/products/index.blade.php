@@ -262,13 +262,13 @@
                   <thead>
                     <tr>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">No</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Photo</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Code</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Name</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Type</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Expired Date</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Price</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Stock</th>
-                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Image</th>
                         <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Actions</th>
                     </tr>
                   </thead>
@@ -276,15 +276,15 @@
                     @foreach ($datas as $nmr => $data)
                     <tr>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$nmr + 1 . "."}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
+                          <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
+                        </td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->kd_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jenis_barang}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_expired}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
-                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
-                        </td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
                           <a href="{{ route('products.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
                           <a href="{{ route('products.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>

@@ -6,6 +6,7 @@ use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SaleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,8 +33,9 @@ Route::middleware('auth')->group(function () {
 
 // High privilege routes
 Route::middleware(['auth', 'role:admin,owner'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::resource('dashboard', DashboardController::class);
     Route::resource('distributor', DistributorController::class);
     Route::resource('products', ProductController::class);
     Route::resource('purchase', PurchaseController::class);
+    Route::resource('sale', SaleController::class);
 });
