@@ -2,7 +2,7 @@
 @section('menu')
     @include('be.menu')
 @endsection
-@section('purchase')
+@section('sale')
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
@@ -20,11 +20,6 @@
             </div>
         </div>
         <ul class="navbar-nav  justify-content-end">
-            <li class="nav-item d-flex align-items-center">
-            <div class="mx-3">
-              <a href="{{route('purchase.create')}}" class="btn btn-primary btn-sm mb-0">Add New {{ $title }}</a>
-            </div>
-            </li>
             <li class="nav-item d-flex align-items-center">
             <span class="nav-link text-body font-weight-bold px-0 me-2">
                     <i class="fa fa-user me-sm-1"></i>
@@ -254,10 +249,68 @@
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>{{$title}} Data</h6>
+              <!-- <h6>Add New {{$title}} Data</h6> -->
+                <input type="text" class="form-control fs-1 fw-bold bg-primary text-white text-center" id="total_bayar" name="total_bayar" placeholder="Enter Product Total Pay" value="@if(isset(session('data')->total_bayar)) {{ session('data')->total_bayar }}@else{{ old('total_bayar') ? old('total_bayar') : 'Rp,-' }}@endif"  disabled>        
             </div>
-            <div class="card-body px-0 pt-0 pb-2">
-              <div class="table-responsive p-0">
+            <div class="card-body px-0 pt-0 pb-2 border border-2 border-primary border-radius-lg mt-3 ms-4 me-4">
+                <form action="{{ route('purchase.store')}}" method="POST" id="form" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row ms-3 me-3">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="no_nota" class="form-label">No Invoice</label>
+                                <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="255" readonly>
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="id_barang" class="form-label">Product</label>
+                                <select class="form-control" id="id_barang" name="id_barang">
+                                    <option value="" selected>Select Product</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}" {{ old('id_barang') == $product->id ? 'selected' : '' }}>
+                                        {{ $product->nama_barang }}
+                                        </option>
+
+                                    @endforeach 
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="harga_jual" class="form-label">Selling Price</label>
+                                <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Selling Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}">
+                            </div>
+                            <div class="mb-3 px-3 pt-3">
+                                <label for="jumlah_beli" class="form-label">Selling Amount</label>
+                                <input type="text" class="form-control" id="jumlah_jual" name="jumlah_jual" placeholder="Enter Product Purchase Amount" value="{{ old('jumlah_jual') ? old('jumlah_jual') : 0 }}">
+                            </div>
+                        </div>
+                         <div class="mb-3 px-3 pt-3">
+                                <label for="subtotal" class="form-label fs-1">Subtotal</label>
+                                <input type="text" class="form-control fs-1 fw-bold" id="subtotal" name="subtotal" placeholder="Enter Product Subtotal" value="{{ old('subtotal') ? old('subtotal') : 0 }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row ms-3 me-3 mt-3">
+                        <div class="col-12">
+                            <div class="px-3 pb-3 text-end">
+                                <a href="{{ route('purchase.index')}}" class="btn bg-gradient-secondary me-3">Cancel</a>
+                                <button type="button" id="simpan" class="btn bg-gradient-primary">Save New {{ $title }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <div class="row">
+        <div class="col-id">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Sale Datas</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2 border border-2 border-primary border-radius-lg mt-3 mb-3 ms-4 me-4">
+                    <div class="table-responsive p-0">
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
@@ -300,12 +353,8 @@
                           <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
                         </td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <a href="javascript:void(0);" onclick="editSudo(event, '{{ route('purchase.edit', $data->id) }}')">
-                            <img src="{{asset('be/assets/img/icons/edit.png')}}" alt="Edit" width="20" class="me-2" title="Edit">
-                          </a>
-                          <a href="{{ route('purchase.destroy', $data->id) }}" onclick="hapus(event, this)">
-                              <img src="{{asset('be/assets/img/icons/delete.png')}}" alt="Delete" width="20" class="cursor-pointer me-2" title="Delete">
-                          </a>
+                          <a href="{{ route('purchase.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
+                          <a href="{{ route('purchase.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
                         </td>
                     </tr>
 
@@ -328,13 +377,12 @@
                         </div>
                     @endforeach
                   </tbody>
-                </table> 
+                </table>  
               </div>
             </div>
-          </div>
         </div>
-      </div>
-
+    </div>
+</div>
 
     <!-- End Main Bagian Kanan -->
 
@@ -373,125 +421,127 @@
           </div>
         </div>
       </footer>
+      <script>
+        let btnSimpan = document.getElementById('simpan');
+        let form = document.getElementById('form');
+        let no_nota = document.getElementById('no_nota');
+        let distributor = document.getElementById('distributor');
+        let id_barang = document.getElementById('id_barang');
+        let tgl_nota = document.getElementById('tgl_nota');
+        let harga_beli = document.getElementById('harga_beli');
+        let margin_jual = document.getElementById('margin_jual');
+        let harga_jual = document.getElementById('harga_jual');
+        let jumlah_beli = document.getElementById('jumlah_beli');
+        let subtotal = document.getElementById('subtotal');
+        let total_bayar = document.getElementById('total_bayar');
+        
+        btnSimpan.addEventListener('click', function() {
+            if(id_barang.value.trim() === '') {
+                id-barang.focus();
+                swal("Invalid!", "You have to choose the Product!", "error");
+            }
+            else if(jumlah_jual.value.trim() === '') { 
+                jumlah_jual.focus();
+                swal("Invalid!", "Selling Amount cannot be zero value!", "error");
+            }
+            else {
+                form.submit();
+            }
+        });
+
+        function hanyaAngka(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                evt.preventDefault();
+            } else
+            {
+                return true;
+            }
+        };
+
+        jumlah_jual.addEventListener('keypress', hanyaAngka)
+
+
+        jumlah_jual.addEventListener('focus', function() {
+            if(jumlah_jual.value.trim() === '0') {
+                jumlah_jual.value = '';
+            }
+        });
+
+        jumlah_jual.addEventListener('blur', function() {
+            if(jumlah_jual.value.trim() === '') {
+                jumlah_jual.value = '0';
+            }
+        });
+
+        function subTotal(hrg_beli, jml_beli) {
+            return hrg_beli * jml_beli;
+        };
+
+        // id_barang.addEventListener('change', function(){
+        //     harga_jual.value = this.options;
+        // })
+
+        function totalBayar(){
+            let total_bayar_lama;
+            @if(isset(session('data')->total_bayar)) 
+                total_bayar_lama = {{ session('data')->total_bayar }};
+            @else 
+                total_bayar_lama = 0;
+            @endif
+            return total_bayar.value = parseInt(total_bayar_lama) + parseInt(subtotal.value);
+        };
+
+        harga_jual.addEventListener('keyup', function() {
+            if(harga_jual.value === '') {
+                subtotal.value = subTotal(0, parseInt(jumlah_jual.value));
+                total_bayar.value = totalBayar();
+            } else {
+                subtotal.value = subTotal(parseInt(harga_jual.value), parseInt(jumlah_jual.value));
+                @if(isset(session('data')->total_bayar)) 
+                    total_bayar.value = parseInt({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
+                @else
+                    total_bayar.value = totalBayar();
+                @endif
+            }
+        });
+
+        jumlah_beli.addEventListener('keyup', function() {
+            if(jumlah_beli.value === '') {
+                subtotal.value = subTotal(parseInt(harga_beli.value), 0);
+                total_bayar.value = totalBayar();
+            } else {
+                subtotal.value = subTotal(parseInt(harga_beli.value), parseInt(jumlah_beli.value));
+                @if(isset(session('data')->total_bayar)) 
+                    total_bayar.value = parseInt ({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
+                @else
+                    total_bayar.value = subtotal.value;
+                @endif
+            }
+        });
+
+        @if (session('success'))
+        swal({
+            title: "Success!",
+            text: "{{ session('success') }}",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonClass: "btn-info",
+            confirmButtonText: "Yes, add new item purchase data!",
+            cancelButtonClass: "btn-secondary",
+            cancelButtonText: "No, cancel pls!",
+            closeOnConfirm: true
+        },
+        function(isConfirm) {
+            if (isConfirm) {
+                no_nota.disabled = true;
+                tgl_nota.disabled = true;
+                distributor.disabled = true;
+            } else {
+                window.location.href = "{{ route('purchase.index') }}";
+         }
+        });
+        @endif
+      </script>
     </div>
-    <form action="" method="post" id="form">
-        @method('DELETE')
-        @csrf
-  </form>
-    <script>
-      @if (session('simpan'))
-        swal("Success", "{{ session('simpan') }}", "success");
-      @endif
-      @if (session('ubah'))
-        swal("Success", "{{ session('ubah') }}", "success");
-      @endif
-      @if (session('duplikat'))
-        swal("Duplicated Data!", "{{ session('duplikat') }}", "error");
-      @endif
-      @if (session('hapus'))
-        swal("Deleted!", "{{ session('hapus') }}", "success");
-      @endif
-      @if (session('gagal'))
-        swal("Failed!", "{{ session('gagal') }}", "error");
-      @endif
-
-      let form = document.getElementById('form');
-      function hapus(event, el) {
-            event.preventDefault();
-            swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this data!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonClass: "btn-danger",
-                confirmButtonText: "Yes, Delete it!",
-                closeOnConfirm: false 
-            },
-            function(isConfirm) {
-                if (isConfirm) {
-                    swal({
-                        title: "Authentication Required!",
-                        text: "Write your boss's password to DELETE this data:",
-                        type: "input",
-                        inputType: "password",
-                        showCancelButton: true,
-                        closeOnConfirm: false,
-                        inputPlaceholder: "Enter owner password"
-                    },
-                    function(inputValue) {
-                        if (inputValue === false) return false; 
-                        if (inputValue === "") {
-                            swal.showInputError("Password cannot be empty!");
-                            return false;
-                        }
-
-    
-                        let oldInput = document.querySelector('#form input[name="boss_password"]');
-                        if(oldInput) oldInput.remove();
-
-                        let passwordInput = document.createElement("input");
-                        passwordInput.setAttribute("type", "hidden");
-                        passwordInput.setAttribute("name", "boss_password");
-                        passwordInput.setAttribute("value", inputValue);
-                        
-                        form.appendChild(passwordInput);
-                        form.action = el.href; 
-                        form.submit(); 
-                    });
-                }
-            });
-        }
-        function editSudo(event, url) {
-          event.preventDefault();
-          
-          // Pop-up 1: Minta input password
-          swal({
-              title: "Password required!",
-              text: "Write your boss's password:",
-              type: "input",
-              inputType: "password",
-              showCancelButton: true,
-              closeOnConfirm: false,
-              inputPlaceholder: "Enter owner password"
-          },
-          function(inputValue) {
-              if (inputValue === false) return false; 
-              if (inputValue === "") {
-                  swal.showInputError("Password cannot be empty!");
-                  return false;
-              }
-
-              // Kirim request GET pakai AJAX, password numpang di URL belakang layar
-              let fetchUrl = url + '?boss_password=' + encodeURIComponent(inputValue);
-
-              fetch(fetchUrl, {
-                  method: 'GET',
-                  headers: {
-                      'X-Requested-With': 'XMLHttpRequest' 
-                  }
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.success) {
-                      swal({
-                          title: "Nice!",
-                          text: "Your password is correct!",
-                          type: "success",
-                          confirmButtonClass: "btn-success",
-                          confirmButtonText: "OK",
-                          closeOnConfirm: true
-                      },
-                      function() {
-                          window.location.href = data.redirect_url;
-                      });
-                  } else {
-                      swal.showInputError(data.message);
-                  }
-              })
-              .catch(error => {
-                  swal.showInputError("Something went wrong with the server!");
-              });
-          });
-      }
-    </script>
 @endsection

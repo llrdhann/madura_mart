@@ -8,6 +8,8 @@ use App\Models\Distributor;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Purchase_Detail;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 
 class PurchaseController extends Controller
@@ -69,9 +71,39 @@ class PurchaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+
+    public function edit(Request $request, string $id)
     {
         //
+        if ($request->ajax()) {
+            $owner = User::where('role', 'owner')->first();
+            
+            if (!$owner || !Hash::check($request->boss_password, $owner->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Wrong Boss Password! Access Denied.'
+                ]);
+            }
+
+            session()->put('sudo_edit_granted_' . $id, true);
+
+            return response()->json([
+                'success' => true,
+                'redirect_url' => route('purchase.edit', $id)
+            ]);
+        }
+
+
+        if (!session()->has('sudo_edit_granted_' . $id)) {
+            return redirect()->route('purchase.index')->with('gagal', 'Unauthorized! You must verify password first.');
+        }
+
+        return view('purchase.edit', [
+            'title' => 'Purchase',
+            'distributors' => Distributor::all(),
+            'products' => Product::all(),
+            'data' => DB::table('vwpurchase')->where('id', $id)->first()
+        ]);
     }
 
     /**
@@ -80,13 +112,42 @@ class PurchaseController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        session()->forget('sudo_edit_granted_' . $id);
+
+        Purchase::findOrFail($id)->update([
+            'no_nota' => $request->no_nota,
+            'tgl_nota' => $request->tgl_nota,
+            'id_distributor' => $request->id_distributor,
+            'total_bayar' => $request->total_bayar ?? 0,
+        ]);
+
+        // Update data Detail (Purchase_Details)
+        DB::table('purchase__details')->where('id_pembelian', $id)->update([
+            'id_barang' => $request->id_barang,
+            'harga_beli' => $request->harga_beli,
+            'margin_jual' => $request->margin_jual,
+            'jumlah_beli' => $request->jumlah_beli,
+            'subtotal' => $request->subtotal,
+        ]);
+
+        return redirect()->route('purchase.index')->with('ubah', 'Purchase data has been successfully updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         //
+        $owner = User::where('role', 'owner')->first();
+        
+        if (!$owner || !Hash::check($request->boss_password, $owner->password)) {
+            return redirect()->route('purchase.index')->with('gagal', 'Delete Failed! Wrong Boss Password.');
+        }
+
+        DB::table('purchase__details')->where('id_pembelian', $id)->delete();
+        Purchase::findOrFail($id)->delete();
+
+        return redirect()->route('purchase.index')->with('hapus', 'Purchase data has been successfully deleted!');
     }
 }

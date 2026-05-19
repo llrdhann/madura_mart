@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@maduramart.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('admin123'),
             'role' => 'admin',
             'alamat' => 'Jl. Admin No. 1',
             'no_telepon' => '081234567890',
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Owner',
             'email' => 'owner@maduramart.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('owner123'),
             'role' => 'owner',
             'alamat' => 'Jl. Owner No. 2',
             'no_telepon' => '081234567891',
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Courier',
             'email' => 'courier@maduramart.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('courier123'),
             'role' => 'courier',
             'alamat' => 'Jl. Courier No. 3',
             'no_telepon' => '081234567892',
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Customer',
             'email' => 'customer@maduramart.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('customer123'),
             'role' => 'customer',
             'alamat' => 'Jl. Customer No. 4',
             'no_telepon' => '081234567893',
