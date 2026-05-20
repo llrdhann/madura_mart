@@ -428,18 +428,17 @@
         });
 
         function hanyaAngka(evt) {
-            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            let charCode = (evt.which) ? evt.which : evt.keyCode;
             if (charCode > 31 && (charCode < 48 || charCode > 57)) {
                 evt.preventDefault();
-            } else
-            {
+            } else {
                 return true;
             }
         };
 
-        harga_beli.addEventListener('keypress', hanyaAngka)
-        margin_jual.addEventListener('keypress', hanyaAngka)
-        jumlah_beli.addEventListener('keypress', hanyaAngka)
+        harga_beli.addEventListener('keypress', hanyaAngka);
+        margin_jual.addEventListener('keypress', hanyaAngka);
+        jumlah_beli.addEventListener('keypress', hanyaAngka);
 
         harga_beli.addEventListener('focus', function() {
             if(harga_beli.value.trim() === '0') {
@@ -477,67 +476,40 @@
             }
         });
 
-        function hargaJual(hrg_beli, margin) {
-            return hrg_beli + (hrg_beli * (margin / 100));
-        };
-        
-        harga_beli.addEventListener('keyup',  function() {
-                if(harga_beli.value === '') {
-                    harga_jual.value = hargaJual(0, parseInt(margin_jual.value));
-                } else {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), parseInt(margin_jual.value));
-                }});
-        
+        // 🔥 DIUBAH: Semua logika perhitungan disatukan di sini biar rapi dan gak tumpang tindih
+        function updateKalkulasi() {
+            // 1. Ambil inputan user, pake || 0 biar otomatis 0 kalau dikosongin
+            let hrg_beli = parseInt(harga_beli.value) || 0;
+            let margin = parseInt(margin_jual.value) || 0;
+            let jml_beli = parseInt(jumlah_beli.value) || 0;
 
-        margin_jual.addEventListener('keyup',  function() {
-                if(margin_jual.value === '') {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), 0);
-                } else {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), parseInt(margin_jual.value));
-                }});
+            // 2. Hitung Harga Jual -> (Harga beli + (Harga beli * margin/100))
+            let hrg_jual = hrg_beli + (hrg_beli * (margin / 100));
+            harga_jual.value = Math.round(hrg_jual); // Dibulatkan biar gak ada desimal aneh
 
-        function subTotal(hrg_beli, jml_beli) {
-            return hrg_beli * jml_beli;
-        };
+            // 3. Hitung Subtotal -> (Harga Beli * Jumlah Beli)
+            let sub = hrg_beli * jml_beli;
+            subtotal.value = sub;
 
+            // 4. Hitung Total Item Saat Ini -> (Harga Jual * Jumlah Beli)
+            let total_item_baru = hrg_jual * jml_beli;
 
-        function totalBayar(){
-            let total_bayar_lama;
+            // 5. Kalkulasi Total Bayar Keseluruhan (Termasuk session jika ada)
+            let total_bayar_lama = 0;
             @if(isset(session('data')->total_bayar)) 
-                total_bayar_lama = {{ session('data')->total_bayar }};
-            @else 
-                total_bayar_lama = 0;
+                total_bayar_lama = parseInt({{ session('data')->total_bayar }});
+                total_bayar.value = Math.round(total_bayar_lama + total_item_baru);
+            @else
+                total_bayar.value = Math.round(total_item_baru);
             @endif
-            return total_bayar.value = parseInt(total_bayar_lama) + parseInt(subtotal.value);
-        };
+        }
 
-        harga_beli.addEventListener('keyup', function() {
-            if(harga_beli.value === '') {
-                subtotal.value = subTotal(0, parseInt(jumlah_beli.value));
-                total_bayar.value = totalBayar();
-            } else {
-                subtotal.value = subTotal(parseInt(harga_beli.value), parseInt(jumlah_beli.value));
-                @if(isset(session('data')->total_bayar)) 
-                    total_bayar.value = parseInt({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
-                @else
-                    total_bayar.value = totalBayar();
-                @endif
-            }
-        });
-
-        jumlah_beli.addEventListener('keyup', function() {
-            if(jumlah_beli.value === '') {
-                subtotal.value = subTotal(parseInt(harga_beli.value), 0);
-                total_bayar.value = totalBayar();
-            } else {
-                subtotal.value = subTotal(parseInt(harga_beli.value), parseInt(jumlah_beli.value));
-                @if(isset(session('data')->total_bayar)) 
-                    total_bayar.value = parseInt ({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
-                @else
-                    total_bayar.value = totalBayar();
-                @endif
-            }
-        });
+        // 🔥 DIUBAH: Cukup panggil 1 fungsi (updateKalkulasi) buat ke-3 event ini
+        harga_beli.addEventListener('keyup', updateKalkulasi);
+        margin_jual.addEventListener('keyup', updateKalkulasi);
+        jumlah_beli.addEventListener('keyup', updateKalkulasi);
+        
+        // 🔥 DIUBAH: Fungsi hargaJual, subTotal, dan totalBayar yang lama DIHAPUS karena sudah di-cover di dalam updateKalkulasi()
 
         @if (session('success'))
         swal({
@@ -558,7 +530,7 @@
                 distributor.disabled = true;
             } else {
                 window.location.href = "{{ route('purchase.index') }}";
-         }
+            }
         });
         @endif
       </script>
