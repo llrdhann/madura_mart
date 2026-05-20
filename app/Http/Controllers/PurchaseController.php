@@ -8,6 +8,8 @@ use App\Models\Distributor;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Purchase_Detail;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 
 class PurchaseController extends Controller
@@ -44,18 +46,44 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        if($request->has('no_nota')) {
+        if($request->has('no_nota') && $request->no_nota != '') {
+            
+            $ada_nota = DB::table('purchases')->where('no_nota', $request->no_nota)->exists();
+            
+            if ($ada_nota) {
+                return redirect()->route('purchase.create')
+                    ->with('duplikat', 'Invoice Number ' . $request->no_nota . ' is already exists. Please use a different Invoice Number.')
+                    ->withInput();
+            }
+
             $purchase = $request->only('no_nota', 'tgl_nota', 'id_distributor');
             $purchase['total_bayar'] = 0;
-            $purchase = Purchase::create($purchase);
+            Purchase::create($purchase);
+        }
+
+        $id_pembelian_terakhir = DB::table('purchases')->max('id');
+        
+        $ada_barang = DB::table('purchase__details')
+                        ->where('id_pembelian', $id_pembelian_terakhir)
+                        ->where('id_barang', $request->id_barang)
+                        ->exists();
+
+        if ($ada_barang) {
+            return redirect()->route('purchase.create')
+                ->with('duplikat', 'This product has already been added to this invoice. Please use different data.')
+                ->withInput();
         }
 
         $purchaseDetails = $request->only('id_barang', 'harga_beli', 'margin_jual', 'jumlah_beli', 'subtotal');
-        $purchaseDetails['id_pembelian'] = DB::table('purchases')->max('id');    
-        $purchaseDetails = Purchase_Detail::create($purchaseDetails);
+        $purchaseDetails['id_pembelian'] = $id_pembelian_terakhir;    
+        Purchase_Detail::create($purchaseDetails);
 
-       return redirect()->route('purchase.index')->with('success', 'Purchase with invoice no  '. $request->no_nota .' has been created successfully.')->with('data', DB::table('purchases')->where('id', DB::table('purchases')->max('id'))->first());
+        $data_nota = DB::table('purchases')->where('id', $id_pembelian_terakhir)->first();
+        $no_nota_display = $request->has('no_nota') ? $request->no_nota : $data_nota->no_nota;
+
+        return redirect()->route('purchase.index')
+            ->with('simpan', 'Purchase with invoice no ' . $no_nota_display . ' has been created successfully.')
+            ->with('data', $data_nota);
     }
 
     /**
@@ -69,9 +97,39 @@ class PurchaseController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+
+    public function edit(Request $request, string $id)
     {
         //
+        if ($request->ajax()) {
+            $owner = User::where('role', 'owner')->first();
+            
+            if (!$owner || !Hash::check($request->boss_password, $owner->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Wrong Boss Password! Access Denied.'
+                ], 403);
+            }
+
+            session()->put('sudo_edit_granted_' . $id, true);
+
+            return response()->json([
+                'success' => true,
+                'redirect_url' => route('purchase.edit', $id)
+            ]);
+        }
+
+
+        if (!session()->has('sudo_edit_granted_' . $id)) {
+            return redirect()->route('purchase.index')->with('gagal', 'Unauthorized! You must verify password first.');
+        }
+
+        return view('purchase.edit', [
+            'title' => 'Purchase',
+            'distributors' => Distributor::all(),
+            'products' => Product::all(),
+            'data' => DB::table('vwpurchase')->where('id', $id)->first()
+        ]);
     }
 
     /**
@@ -79,14 +137,52 @@ class PurchaseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        session()->forget('sudo_edit_granted_' . $id);
+
+        $ada_nota = DB::table('purchases')
+                      ->where('no_nota', $request->no_nota)
+                      ->where('id', '!=', $id) 
+                      ->exists();
+
+        if ($ada_nota) {
+            return redirect()->route('purchase.edit', $id)
+                ->with('duplikat', 'Invoice Number ' . $request->no_nota . ' is already used by another purchase. Please use a different Invoice Number.')
+                ->withInput();
+        }
+
+        Purchase::findOrFail($id)->update([
+            'no_nota' => $request->no_nota,
+            'tgl_nota' => $request->tgl_nota,
+            'id_distributor' => $request->id_distributor,
+            'total_bayar' => $request->total_bayar ?? 0,
+        ]);
+
+        DB::table('purchase__details')->where('id_pembelian', $id)->update([
+            'id_barang' => $request->id_barang,
+            'harga_beli' => $request->harga_beli,
+            'margin_jual' => $request->margin_jual,
+            'jumlah_beli' => $request->jumlah_beli,
+            'subtotal' => $request->subtotal,
+        ]);
+
+        return redirect()->route('purchase.index')->with('ubah', 'Purchase data has been successfully updated!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         //
+        $owner = User::where('role', 'owner')->first();
+        
+        if (!$owner || !Hash::check($request->boss_password, $owner->password)) {
+            return redirect()->route('purchase.index')->with('gagal', 'Delete Failed! Wrong Boss Password.');
+        }
+
+        DB::table('purchase__details')->where('id_pembelian', $id)->delete();
+        Purchase::findOrFail($id)->delete();
+
+        return redirect()->route('purchase.index')->with('hapus', 'Purchase data has been successfully deleted!');
     }
 }

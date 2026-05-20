@@ -300,8 +300,12 @@
                           <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
                         </td>
                         <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
-                          <a href="{{ route('purchase.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
-                          <a href="{{ route('purchase.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
+                          <a href="javascript:void(0);" onclick="editSudo(event, '{{ route('purchase.edit', $data->id) }}')">
+                            <img src="{{asset('be/assets/img/icons/edit.png')}}" alt="Edit" width="20" class="me-2" title="Edit">
+                          </a>
+                          <a href="{{ route('purchase.destroy', $data->id) }}" onclick="hapus(event, this)">
+                              <img src="{{asset('be/assets/img/icons/delete.png')}}" alt="Delete" width="20" class="cursor-pointer me-2" title="Delete">
+                          </a>
                         </td>
                     </tr>
 
@@ -392,22 +396,110 @@
       @endif
 
       let form = document.getElementById('form');
-    function hapus(event, el) {
-        event.preventDefault();
-        swal({
+      
+      // FUNGSI HAPUS (TIDAK ADA MASALAH)
+      function hapus(event, el) {
+            event.preventDefault();
+            swal({
                 title: "Are you sure?",
                 text: "Once deleted, you will not be able to recover this data!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonClass: "btn-danger",
                 confirmButtonText: "Yes, Delete it!",
-                closeOnCOnfirm: true
+                closeOnConfirm: false 
             },
-            function() {
-               
-                    form.action = el.href;
-                    form.submit(); 
+            function(isConfirm) {
+                if (isConfirm) {
+                    swal({
+                        title: "Authentication Required!",
+                        text: "Write your boss's password to DELETE this data:",
+                        type: "input",
+                        inputType: "password",
+                        showCancelButton: true,
+                        closeOnConfirm: false,
+                        inputPlaceholder: "Enter owner password"
+                    },
+                    function(inputValue) {
+                        if (inputValue === false) return false; 
+                        if (inputValue === "") {
+                            swal.showInputError("Password cannot be empty!");
+                            return false;
+                        }
+    
+                        let oldInput = document.querySelector('#form input[name="boss_password"]');
+                        if(oldInput) oldInput.remove();
+
+                        let passwordInput = document.createElement("input");
+                        passwordInput.setAttribute("type", "hidden");
+                        passwordInput.setAttribute("name", "boss_password");
+                        passwordInput.setAttribute("value", inputValue);
+                        
+                        form.appendChild(passwordInput);
+                        form.action = el.href; 
+                        form.submit(); 
+                    });
+                }
             });
-            }
+        }
+
+        // FUNGSI EDIT SUDO (INI YANG GUA PERBAIKI)
+        function editSudo(event, url) {
+          event.preventDefault();
+          swal({
+              title: "Password required!",
+              text: "Write your boss's password:",
+              type: "input",
+              inputType: "password",
+              showCancelButton: true,
+              closeOnConfirm: false, 
+              inputPlaceholder: "Enter owner password"
+          },
+          function(inputValue) {
+              if (inputValue === false) return false; 
+              if (inputValue === "") {
+                  swal.showInputError("Password cannot be empty!");
+                  return false;
+              }
+              
+              let fetchUrl = url + '?boss_password=' + encodeURIComponent(inputValue);
+
+              fetch(fetchUrl, {
+                  method: 'GET',
+                  headers: { 'X-Requested-With': 'XMLHttpRequest' }
+              })
+              .then(response => {
+                  return response.json().then(data => {
+                      if (!response.ok || !data.success) {
+                          // Jika password salah, lempar ke catch
+                          throw new Error(data.message || "Wrong Boss Password!");
+                      }
+                      return data;
+                  });
+              })
+              .then(data => {
+                  // Jika sukses (Password Benar)
+                  swal({
+                      title: "Nice!",
+                      text: "Your password is correct!",
+                      type: "success",
+                      confirmButtonClass: "btn-success",
+                      confirmButtonText: "OK",
+                      closeOnConfirm: true
+                  }, function() {
+                      window.location.href = data.redirect_url;
+                  });
+              })
+              .catch(error => {
+                  swal({
+                      title: "Access Denied!",
+                      text: error.message,
+                      type: "error",
+                      confirmButtonClass: "btn-danger",
+                      confirmButtonText: "Close"
+                  });
+              });
+          });
+      }
     </script>
 @endsection

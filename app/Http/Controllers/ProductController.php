@@ -82,25 +82,44 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
         $product_lama = DB::table('products')->where('id', $id)->value('nama_barang');
         $foto_lama = DB::table('products')->where('id', $id)->value('foto_barang');
         $products = Product::findOrFail($id);
 
-        if ($request->hasFile('foto_barang')) {
-            $data = $request->all();
-            $data['foto_barang'] = $request->file('foto_barang')->store('product_images');
-            Storage::delete($foto_lama);
-            $products->update($data);
-            return redirect()->route('products.index')->with('ubah', 'The Product Data, ' . $product_lama . ', has been succesfully updated');
+        $ada_kd = DB::table('products')
+                    ->where('kd_barang', $request->kd_barang)
+                    ->where('id', '!=', $id)
+                    ->exists();
+
+        $ada_nama = DB::table('products')
+                    ->where('nama_barang', $request->nama_barang)
+                    ->where('id', '!=', $id)
+                    ->exists();
+
+        if ($ada_kd) {
+            return redirect()->route('products.edit', $id)
+                ->with('duplikat', 'Product ' . $request->kd_barang . ' data with the same code already exists. Please use different data.')
+                ->withInput();
+
+        } elseif ($ada_nama) {
+            return redirect()->route('products.edit', $id)
+                ->with('duplikat', 'Product ' . $request->nama_barang . ' data with the same name already exists. Please use different data.')
+                ->withInput();
 
         } else {
             $data = $request->all();
-            $data['foto_barang'] = $foto_lama;
+            
+            if ($request->hasFile('foto_barang')) {
+                $data['foto_barang'] = $request->file('foto_barang')->store('product_images');
+                Storage::delete($foto_lama); 
+            } else {
+                $data['foto_barang'] = $foto_lama; 
+            }
+            
             $products->update($data);
-            return redirect()->route('products.index')->with('ubah', 'The Product Data, ' . $product_lama . ', has been succesfully updated');
+            return redirect()->route('products.index')
+                ->with('ubah', 'The Product Data, ' . $request->nama_barang . ', has been succesfully updated');
         }
-        
     }
 
     /**

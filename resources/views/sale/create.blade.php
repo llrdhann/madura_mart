@@ -2,7 +2,7 @@
 @section('menu')
     @include('be.menu')
 @endsection
-@section('purchase')
+@section('sale')
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
@@ -249,30 +249,19 @@
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Add New {{$title}} Data</h6>
+              <!-- <h6>Add New {{$title}} Data</h6> -->
+                <input type="text" class="form-control fs-1 fw-bold bg-primary text-white text-center" id="total_bayar" name="total_bayar" placeholder="Enter Product Total Pay" value="@if(isset(session('data')->total_bayar)) {{ session('data')->total_bayar }}@else{{ old('total_bayar') ? old('total_bayar') : 'Rp,-' }}@endif"  disabled>        
             </div>
-            <div class="card-body px-0 pt-0 pb-2">
+            <div class="card-body px-0 pt-0 pb-2 border border-2 border-primary border-radius-lg mt-3 ms-4 me-4">
                 <form action="{{ route('purchase.store')}}" method="POST" id="form" enctype="multipart/form-data">
                     @csrf
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
-                            <div class="mb-3">
+                            <div class="mb-3 px-3 pt-3">
                                 <label for="no_nota" class="form-label">No Invoice</label>
-                                <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="15">
+                                <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="255" readonly>
                             </div>
-                            <div class="mb-3">
-                                <label for="distributor" class="form-label">Distributor</label>
-                                <select class="form-control" id="distributor" name="id_distributor">
-                                    <option value="" selected>Select Distributor</option>
-                                    @foreach($distributors as $distributor)
-                                        <option value="{{ $distributor->id }}"
-                                        @if (isset(session('data')->id_distributor) && session('data')->id_distributor == $distributor->id) selected @endif>
-                                        {{ $distributor->nama_distributor }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-3">
+                            <div class="mb-3 px-3 pt-3">
                                 <label for="id_barang" class="form-label">Product</label>
                                 <select class="form-control" id="id_barang" name="id_barang">
                                     <option value="" selected>Select Product</option>
@@ -280,39 +269,24 @@
                                         <option value="{{ $product->id }}" {{ old('id_barang') == $product->id ? 'selected' : '' }}>
                                         {{ $product->nama_barang }}
                                         </option>
-                                    @endforeach
+
+                                    @endforeach 
                                 </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="harga_beli" class="form-label">Purchase Price</label>
-                                <input type="text" class="form-control" id="harga_beli" name="harga_beli" placeholder="Enter Product Purchase Price" value="{{ old('harga_beli') ? old('harga_beli') : 0 }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="margin_jual" class="form-label">Selling Margin</label>
-                                <input type="text" class="form-control" id="margin_jual" name="margin_jual" placeholder="Enter Product Selling Margin" value="{{ old('margin_jual') ? old('margin_jual') : 0 }}">
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6">
-                            <div class="mb-3">
-                                <label for="tgl_nota" class="form-label">Invoice Date</label>
-                                <input type="date" class="form-control" id="tgl_nota" name="tgl_nota" value="@if (isset(session('data')->tgl_nota)) {{ session('data')->tgl_nota }} @endif">
-                            </div>
-                            <div class="mb-3">
+                            <div class="mb-3 px-3 pt-3">
                                 <label for="harga_jual" class="form-label">Selling Price</label>
-                                <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Selling Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="jumlah_beli" class="form-label">Purchase Amount</label>
-                                <input type="text" class="form-control" id="jumlah_beli" name="jumlah_beli" placeholder="Enter Product Purchase Amount" value="{{ old('jumlah_beli') ? old('jumlah_beli') : 0 }}">
+                                <input type="text" class="form-control" id="harga_jual" name="harga_jual" placeholder="Enter Product Selling Price" value="{{ old('harga_jual') ? old('harga_jual') : 0 }}">
                             </div>
                             <div class="mb-3 px-3 pt-3">
-                                <label for="subtotal" class="form-label">Subtotal</label>
-                                <input type="text" class="form-control" id="subtotal" name="subtotal" placeholder="Enter Product Subtotal" value="{{ old('subtotal') ? old('subtotal') : 0 }}" readonly>
+                                <label for="jumlah_beli" class="form-label">Selling Amount</label>
+                                <input type="text" class="form-control" id="jumlah_jual" name="jumlah_jual" placeholder="Enter Product Purchase Amount" value="{{ old('jumlah_jual') ? old('jumlah_jual') : 0 }}">
                             </div>
-                            <div class="mb-3 px-3 pt-3">
-                                <label for="total_bayar" class="form-label">Total Pay</label>
-                                <input type="text" class="form-control fs-1 fw-bold" id="total_bayar" name="total_bayar" placeholder="Enter Product Total Pay" value="{{ old('total_bayar') ? old('total_bayar') : 0 }}" disabled>
-                            </div>
+                        </div>
+                         <div class="mb-3 px-3 pt-3">
+                                <label for="subtotal" class="form-label fs-1">Subtotal</label>
+                                <input type="text" class="form-control fs-1 fw-bold" id="subtotal" name="subtotal" placeholder="Enter Product Subtotal" value="{{ old('subtotal') ? old('subtotal') : 0 }}" readonly>
                         </div>
                     </div>
                     <div class="row ms-3 me-3 mt-3">
@@ -328,7 +302,87 @@
           </div>
         </div>
       </div>
+    
+      <div class="row">
+        <div class="col-id">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Sale Datas</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2 border border-2 border-primary border-radius-lg mt-3 mb-3 ms-4 me-4">
+                    <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">No</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">No Invoice</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Invoice Date</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Distributor</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Type</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Expired Date</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Stock</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Purchase Price</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Selling Margin</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Selling Price</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Purchase Amount</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Subtotal</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Total Pay</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Product Photo</th>
+                        <th class="text-uppercase text-primary text-xs font-weight-bolder opacity-7">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($datas as $nmr => $data)
+                    <tr>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$nmr + 1 . "."}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->no_nota}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_nota}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_distributor}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->nama_barang}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jenis_barang}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->tgl_expired}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->stok}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_beli, 0, ',', '.')}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->margin_jual}} %</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->harga_jual, 0, ',', '.')}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">{{$data->jumlah_beli}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->subtotal, 0, ',', '.')}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">Rp. {{number_format($data->total_bayar, 0, ',', '.')}}</td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
+                          <img src="{{ asset('storage/'.$data->foto_barang) }}" class="img-thumbnail cursor-pointer" alt="gambar produk" width="50" data-bs-toggle="modal" data-bs-target="#staticBackdrop{{ $data->id }}">
+                        </td>
+                        <td class="text-uppercase text-xs text-secondary mb-0 ps-4">
+                          <a href="{{ route('purchase.edit', $data->id) }}"><img src="{{asset('be/assets/img/icons/edit.png')}}" alt="" width="20"></a>
+                          <a href="{{ route('purchase.destroy', $data->id) }}" onclick="hapus(event, this)"><img src="{{asset('be/assets/img/icons/delete.png')}}" alt="gambar sampah" width="20" class="cursor-pointer me-2" title="delete"></a>
+                        </td>
+                    </tr>
 
+                    <!-- Modal Foto Produk -->
+                     <div class="modal fade" id="staticBackdrop{{ $data->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel{{ $data->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">{{ $data->nama_barang }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="{{ asset('storage/' .$data->foto_barang) }}" alt="gambar produk" class="img-thumbnail cursor-pointer" width="75%">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    @endforeach
+                  </tbody>
+                </table>  
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- End Main Bagian Kanan -->
 
@@ -382,45 +436,13 @@
         let total_bayar = document.getElementById('total_bayar');
         
         btnSimpan.addEventListener('click', function() {
-            if(no_nota.value.trim() === '') {
-                no_nota.focus();
-                swal("Invalid!", "No Invoice Cannot Be Empty!", "error");
-            }
-            else if(distributor.value.trim() === '') {
-                distributor.focus();
-                swal("Invalid!", "You have to choose the Distributor!", "error");
-            }
-            else if(id_barang.value.trim() === '') { 
-                id_barang.focus();
+            if(id_barang.value.trim() === '') {
+                id-barang.focus();
                 swal("Invalid!", "You have to choose the Product!", "error");
             }
-            else if(tgl_nota.value.trim() === '') {
-                tgl_nota.focus();
-                swal("Invalid!", "Purchase Date Cannot Be Empty!", "error");
-            }
-            else if(harga_beli.value.trim() === '') {
-                harga_beli.focus();
-                swal("Invalid!", "Purchase Price Cannot Be Empty!", "error");
-            }
-            else if(margin_jual.value.trim() === '') {
-                margin_jual.focus();
-                swal("Invalid!", "Selling Margin Cannot Be Empty!", "error");
-            }
-            else if(harga_jual.value.trim() === '') {
-                harga_jual.focus();
-                swal("Invalid!", "Selling Price Cannot Be Empty!", "error");
-            }
-            else if(jumlah_beli.value.trim() === '') {
-                jumlah_beli.focus();
-                swal("Invalid!", "Purchase Amount Cannot Be Empty!", "error");
-            }
-            else if(subtotal.value.trim() === '') {
-                subtotal.focus();
-                swal("Invalid!", "Subtotal Cannot Be Empty!", "error");
-            }
-            else if(total_bayar.value.trim() === '') {
-                total_bayar.focus();
-                swal("Invalid!", "Total Pay Cannot Be Empty!", "error");
+            else if(jumlah_jual.value.trim() === '') { 
+                jumlah_jual.focus();
+                swal("Invalid!", "Selling Amount cannot be zero value!", "error");
             }
             else {
                 form.submit();
@@ -437,69 +459,28 @@
             }
         };
 
-        harga_beli.addEventListener('keypress', hanyaAngka)
-        margin_jual.addEventListener('keypress', hanyaAngka)
-        jumlah_beli.addEventListener('keypress', hanyaAngka)
+        jumlah_jual.addEventListener('keypress', hanyaAngka)
 
-        harga_beli.addEventListener('focus', function() {
-            if(harga_beli.value.trim() === '0') {
-                harga_beli.value = '';
+
+        jumlah_jual.addEventListener('focus', function() {
+            if(jumlah_jual.value.trim() === '0') {
+                jumlah_jual.value = '';
             }
         });
 
-        harga_beli.addEventListener('blur', function() {
-            if(harga_beli.value.trim() === '') {
-                harga_beli.value = '0';
+        jumlah_jual.addEventListener('blur', function() {
+            if(jumlah_jual.value.trim() === '') {
+                jumlah_jual.value = '0';
             }
         });
-
-        margin_jual.addEventListener('focus', function() {
-            if(margin_jual.value.trim() === '0') {
-                margin_jual.value = '';
-            }
-        });
-
-        margin_jual.addEventListener('blur', function() {
-            if(margin_jual.value.trim() === '') {
-                margin_jual.value = '0';
-            }
-        });
-
-        jumlah_beli.addEventListener('focus', function() {
-            if(jumlah_beli.value.trim() === '0') {
-                jumlah_beli.value = '';
-            }
-        });
-
-        jumlah_beli.addEventListener('blur', function() {
-            if(jumlah_beli.value.trim() === '') {
-                jumlah_beli.value = '0';
-            }
-        });
-
-        function hargaJual(hrg_beli, margin) {
-            return hrg_beli + (hrg_beli * (margin / 100));
-        };
-        
-        harga_beli.addEventListener('keyup',  function() {
-                if(harga_beli.value === '') {
-                    harga_jual.value = hargaJual(0, parseInt(margin_jual.value));
-                } else {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), parseInt(margin_jual.value));
-                }});
-        
-
-        margin_jual.addEventListener('keyup',  function() {
-                if(margin_jual.value === '') {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), 0);
-                } else {
-                    harga_jual.value = hargaJual(parseInt(harga_beli.value), parseInt(margin_jual.value));
-                }});
 
         function subTotal(hrg_beli, jml_beli) {
             return hrg_beli * jml_beli;
         };
 
+        // id_barang.addEventListener('change', function(){
+        //     harga_jual.value = this.options;
+        // })
 
         function totalBayar(){
             let total_bayar_lama;
@@ -511,12 +492,12 @@
             return total_bayar.value = parseInt(total_bayar_lama) + parseInt(subtotal.value);
         };
 
-        harga_beli.addEventListener('keyup', function() {
-            if(harga_beli.value === '') {
-                subtotal.value = subTotal(0, parseInt(jumlah_beli.value));
+        harga_jual.addEventListener('keyup', function() {
+            if(harga_jual.value === '') {
+                subtotal.value = subTotal(0, parseInt(jumlah_jual.value));
                 total_bayar.value = totalBayar();
             } else {
-                subtotal.value = subTotal(parseInt(harga_beli.value), parseInt(jumlah_beli.value));
+                subtotal.value = subTotal(parseInt(harga_jual.value), parseInt(jumlah_jual.value));
                 @if(isset(session('data')->total_bayar)) 
                     total_bayar.value = parseInt({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
                 @else
@@ -534,7 +515,7 @@
                 @if(isset(session('data')->total_bayar)) 
                     total_bayar.value = parseInt ({{ session('data')->total_bayar }}) + parseInt(subtotal.value);
                 @else
-                    total_bayar.value = totalBayar();
+                    total_bayar.value = subtotal.value;
                 @endif
             }
         });
@@ -559,16 +540,6 @@
             } else {
                 window.location.href = "{{ route('purchase.index') }}";
          }
-        });
-        @endif
-        @if (session('duplikat'))
-        swal({
-            title: "Duplicated Data!",
-            text: "{{ session('duplikat') }}",
-            type: "error",
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: "OK",
-            closeOnConfirm: true
         });
         @endif
       </script>

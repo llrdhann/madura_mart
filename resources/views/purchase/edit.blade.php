@@ -252,13 +252,14 @@
               <h6>Add New {{$title}} Data</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
-                <form action="{{ route('purchase.store')}}" method="POST" id="form" enctype="multipart/form-data">
+                <form action="{{ route('purchase.update', $data->id) }}" method="POST" id="form" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <div class="row ms-3 me-3">
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
                                 <label for="no_nota" class="form-label">No Invoice</label>
-                                <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset(session('data')->no_nota)) {{ session('data')->no_nota }} @endif" maxlength="15">
+                                <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Enter Invoice Number" value="@if (isset($data->no_nota)) {{ $data->no_nota }} @endif" maxlength="15">
                             </div>
                             <div class="mb-3">
                                 <label for="distributor" class="form-label">Distributor</label>
@@ -266,7 +267,7 @@
                                     <option value="" selected>Select Distributor</option>
                                     @foreach($distributors as $distributor)
                                         <option value="{{ $distributor->id }}"
-                                        @if (isset(session('data')->id_distributor) && session('data')->id_distributor == $distributor->id) selected @endif>
+                                        @if (isset($data->id_distributor) && $data->id_distributor == $distributor->id) selected @endif>
                                         {{ $distributor->nama_distributor }}
                                         </option>
                                     @endforeach
@@ -277,7 +278,8 @@
                                 <select class="form-control" id="id_barang" name="id_barang">
                                     <option value="" selected>Select Product</option>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" {{ old('id_barang') == $product->id ? 'selected' : '' }}>
+                                        <option value="{{ $product->id }}"
+                                        @if (isset($data->id_barang) && $data->id_barang == $product->id) selected @endif>
                                         {{ $product->nama_barang }}
                                         </option>
                                     @endforeach
@@ -285,17 +287,17 @@
                             </div>
                             <div class="mb-3">
                                 <label for="harga_beli" class="form-label">Purchase Price</label>
-                                <input type="text" class="form-control" id="harga_beli" name="harga_beli" placeholder="Enter Product Purchase Price" value="{{ old('harga_beli') ? old('harga_beli') : 0 }}">
+                                <input type="text" class="form-control" id="harga_beli" name="harga_beli" placeholder="Enter Product Purchase Price" value="@if (isset($data->harga_beli)) {{ $data->harga_beli }} @endif">
                             </div>
                             <div class="mb-3">
                                 <label for="margin_jual" class="form-label">Selling Margin</label>
-                                <input type="text" class="form-control" id="margin_jual" name="margin_jual" placeholder="Enter Product Selling Margin" value="{{ old('margin_jual') ? old('margin_jual') : 0 }}">
+                                <input type="text" class="form-control" id="margin_jual" name="margin_jual" placeholder="Enter Product Selling Margin" value="@if (isset($data->margin_jual)) {{ $data->margin_jual }} @endif">
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6">
                             <div class="mb-3">
                                 <label for="tgl_nota" class="form-label">Invoice Date</label>
-                                <input type="date" class="form-control" id="tgl_nota" name="tgl_nota" value="@if (isset(session('data')->tgl_nota)) {{ session('data')->tgl_nota }} @endif">
+                                <input type="date" class="form-control" id="tgl_nota" name="tgl_nota" value="@if (isset($data->tgl_nota)) {{ $data->tgl_nota }} @endif">
                             </div>
                             <div class="mb-3">
                                 <label for="harga_jual" class="form-label">Selling Price</label>
@@ -303,7 +305,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="jumlah_beli" class="form-label">Purchase Amount</label>
-                                <input type="text" class="form-control" id="jumlah_beli" name="jumlah_beli" placeholder="Enter Product Purchase Amount" value="{{ old('jumlah_beli') ? old('jumlah_beli') : 0 }}">
+                                <input type="text" class="form-control" id="jumlah_beli" name="jumlah_beli" placeholder="Enter Product Purchase Amount" value="@if (isset($data->jumlah_beli)) {{ $data->jumlah_beli }} @endif">
                             </div>
                             <div class="mb-3 px-3 pt-3">
                                 <label for="subtotal" class="form-label">Subtotal</label>
@@ -503,8 +505,8 @@
 
         function totalBayar(){
             let total_bayar_lama;
-            @if(isset(session('data')->total_bayar)) 
-                total_bayar_lama = {{ session('data')->total_bayar }};
+            @if(isset($data->total_bayar)) 
+                total_bayar_lama = {{ $data->total_bayar }};
             @else 
                 total_bayar_lama = 0;
             @endif
@@ -561,8 +563,8 @@
          }
         });
         @endif
-        @if (session('duplikat'))
-        swal({
+          @if (session('duplikat'))
+          swal({
             title: "Duplicated Data!",
             text: "{{ session('duplikat') }}",
             type: "error",
@@ -570,7 +572,7 @@
             confirmButtonText: "OK",
             closeOnConfirm: true
         });
-        @endif
+          @endif
       </script>
     </div>
 @endsection
